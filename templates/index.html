@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swagger UI</title>
+    <!-- Include necessary CSS and JS files -->
+    <link rel="stylesheet" type="text/css" href="/static/swagger/swagger-ui.css" />
+    <script src="/static/swagger/swagger-ui-bundle.js"></script>
+    <script src="/static/swagger/swagger-ui-standalone-preset.js"></script>
+    <link rel="icon" href="/static/swagger/favicon-16x16.png" type="image/x-icon">
+</head>
+<body>
+    <div id="swagger-ui"></div>
+    <script>
+        window.onload = function() {
+            const ui = SwaggerUIBundle({
+                url: "/openapi.json",
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.SwaggerUIBundlePlugin,
+                    SwaggerUIStandalonePreset
+                ],
+                layout: "StandaloneLayout"
+            });
+            window.ui = ui;
+        };
+    </script>
+</body>
+</html>

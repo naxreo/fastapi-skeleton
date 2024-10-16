@@ -1,38 +1,25 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from common.metadata import get_metadata
-from routes import rt_items, rt_home, rt_admin
-
-## declare app
-meta = get_metadata()
-app = FastAPI(
-    title=meta['title'],
-    description=meta['description'],
-    version=meta['version'],
-    terms_of_service=meta['terms_of_service'],
-    # contact=meta['contact'],
-    # license_info=meta['license_info'],
-    redoc_url=None,
-)
-app.mount("/statics", StaticFiles(directory="statics"), name="statics")
-
-## https://fastapi.tiangolo.com/ko/tutorial/cors/
-origins = ["*"]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+from fastapi.templating import Jinja2Templates
+import uvicorn
 
 
-## routing
-# home templates
-app.include_router(rt_home.router)
-# admin for security
-app.include_router(rt_admin.router)
-# items
-app.include_router(rt_items.router)
+app = FastAPI()
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+
+@app.get("/", include_in_schema=False)
+def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.get("/items/")
+def read_items():
+    return [{"name": "foo"}]
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    # uvicorn.run("main:app", host="0.0.0.0", port=8000, workers=4)
